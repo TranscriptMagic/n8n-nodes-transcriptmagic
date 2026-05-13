@@ -1,0 +1,62 @@
+{
+  "name": "n8n-nodes-transcriptmagic",
+  "version": "0.0.1",
+  "description": "n8n community node for TranscriptMagic — fetch transcripts from YouTube, TikTok, Instagram, and Facebook videos.",
+  "keywords": [
+    "n8n-community-node-package",
+    "transcript",
+    "youtube",
+    "tiktok",
+    "instagram",
+    "facebook",
+    "transcription"
+  ],
+  "license": "MIT",
+  "homepage": "https://transcriptmagic.com",
+  "author": {
+    "name": "TranscriptMagic",
+    "email": "hello@transcriptmagic.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TranscriptMagic/n8n-nodes-transcriptmagic.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TranscriptMagic/n8n-nodes-transcriptmagic/issues"
+  },
+  "engines": {
+    "node": ">=20.15"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "npx rimraf dist && tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes credentials package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/TranscriptMagicApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/TranscriptMagic/TranscriptMagic.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/parser": "~7.15.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.3",
+    "gulp": "^5.0.0",
+    "n8n-workflow": "*",
+    "prettier": "^3.2.5",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.4.5"
+  }
+}
