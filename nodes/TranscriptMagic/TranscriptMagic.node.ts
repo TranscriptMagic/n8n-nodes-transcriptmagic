@@ -24,21 +24,33 @@ const PLATFORM_PATHS: Record<Platform, string> = {
 };
 
 // Best-effort extraction of plain transcript text from per-platform responses.
-// YouTube returns transcript as an array of timed segments; others return a string.
+// Mirrors the same shapes the worker handles in handleTranscriptCore:
+//   - data.transcript (string)
+//   - data.transcript ([string | {text}])
+//   - data.transcripts ([string | {text}])
+//   - data.text (string)
+// YouTube also exposes a pre-joined `transcript_only_text` field that's
+// cheaper than walking the timed segment array.
 function extractText(platform: Platform, body: JsonObject): string {
-	if (platform === 'youtube') {
-		if (typeof body.transcript_only_text === 'string') return body.transcript_only_text;
-		if (Array.isArray(body.transcript)) {
-			return (body.transcript as Array<{ text?: string }>)
-				.map((seg) => seg.text ?? '')
-				.filter(Boolean)
-				.join(' ');
-		}
-		return '';
+	if (platform === 'youtube' && typeof body.transcript_only_text === 'string') {
+		return body.transcript_only_text;
 	}
 	if (typeof body.transcript === 'string') return body.transcript;
+	if (Array.isArray(body.transcript)) {
+		return body.transcript.map(segmentText).filter(Boolean).join(' ');
+	}
 	if (Array.isArray(body.transcripts)) {
-		return (body.transcripts as string[]).join('\n');
+		return body.transcripts.map(segmentText).filter(Boolean).join(' ');
+	}
+	if (typeof body.text === 'string') return body.text;
+	return '';
+}
+
+function segmentText(seg: unknown): string {
+	if (typeof seg === 'string') return seg;
+	if (seg && typeof seg === 'object' && 'text' in seg) {
+		const t = (seg as { text?: unknown }).text;
+		return typeof t === 'string' ? t : '';
 	}
 	return '';
 }
