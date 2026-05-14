@@ -1,0 +1,45 @@
+{
+  "name": "TranscriptMagic — Quickstart",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "5f5d8c3a-1d5b-4c0a-8a3d-1a5e9b7c2d4f",
+      "name": "When clicking 'Test workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "resource": "transcript",
+        "operation": "youtube",
+        "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "options": {}
+      },
+      "id": "9e4b1f2c-7a3d-4f8b-9c5e-2b6d8a1f3e0c",
+      "name": "TranscriptMagic",
+      "type": "n8n-nodes-transcriptmagic.transcriptMagic",
+      "typeVersion": 1,
+      "position": [460, 300]
+    }
+  ],
+  "connections": {
+    "When clicking 'Test workflow'": {
+      "main": [
+        [
+          {
+            "node": "TranscriptMagic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "versionId": "1"
+}
