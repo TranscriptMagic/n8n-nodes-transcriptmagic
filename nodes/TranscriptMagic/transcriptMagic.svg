@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" fill="none">
-  <rect width="60" height="60" rx="12" fill="#E8532B"/>
-  <text x="30" y="42" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-weight="700" font-size="38" fill="#FFFFFF" text-anchor="middle">t</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="8" fill="#0F0F0E"/>
+  <text x="16" y="24" text-anchor="middle" font-family="'Instrument Serif', ui-serif, Georgia, 'Times New Roman', serif" font-style="italic" font-size="26" fill="#FAFAF7">t</text>
 </svg>
