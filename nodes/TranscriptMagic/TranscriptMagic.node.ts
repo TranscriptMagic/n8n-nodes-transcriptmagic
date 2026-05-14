@@ -7,11 +7,10 @@ import type {
 	JsonObject,
 } from 'n8n-workflow';
 import { NodeApiError, NodeOperationError, sleep } from 'n8n-workflow';
+import { version as PACKAGE_VERSION } from '../../package.json';
 
 // Read package version at module load so the X-TM-Client header always
 // reflects the running version of the node.
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const PACKAGE_VERSION: string = (require('../../package.json') as { version: string }).version;
 const CLIENT_HEADER = `n8n@${PACKAGE_VERSION}`;
 const BASE_URL = 'https://api.transcriptmagic.com';
 
@@ -93,25 +92,25 @@ export class TranscriptMagic implements INodeType {
 					{
 						name: 'YouTube',
 						value: 'youtube',
-						action: 'Fetch a YouTube transcript',
+						action: 'Fetch a transcript from youtube',
 						description: 'Fetch a transcript from a YouTube video URL',
 					},
 					{
 						name: 'TikTok',
 						value: 'tiktok',
-						action: 'Fetch a TikTok transcript',
+						action: 'Fetch a transcript from tiktok',
 						description: 'Fetch a transcript from a TikTok video URL',
 					},
 					{
 						name: 'Instagram',
 						value: 'instagram',
-						action: 'Fetch an Instagram transcript',
+						action: 'Fetch a transcript from instagram',
 						description: 'Fetch a transcript from an Instagram video URL',
 					},
 					{
 						name: 'Facebook',
 						value: 'facebook',
-						action: 'Fetch a Facebook transcript',
+						action: 'Fetch a transcript from facebook',
 						description: 'Fetch a transcript from a Facebook video URL',
 					},
 				],
@@ -159,8 +158,7 @@ export class TranscriptMagic implements INodeType {
 							{
 								name: 'Normalized',
 								value: 'normalized',
-								description:
-									'Return { text, platform, credits, url } — hides per-platform response-shape differences',
+								description: 'Return text, platform, credits, and URL — hides per-platform response-shape differences',
 							},
 							{
 								name: 'Raw',
