@@ -14,13 +14,16 @@ import { version as PACKAGE_VERSION } from '../../package.json';
 const CLIENT_HEADER = `n8n@${PACKAGE_VERSION}`;
 const BASE_URL = 'https://api.transcriptmagic.com';
 
-type Platform = 'youtube' | 'tiktok' | 'instagram' | 'facebook';
+type Platform = 'youtube' | 'tiktok' | 'instagram' | 'facebook' | 'linkedin' | 'rumble' | 'twitter';
 
 const PLATFORM_PATHS: Record<Platform, string> = {
 	youtube: '/api/youtube/transcript',
 	tiktok: '/api/tiktok/transcript',
 	instagram: '/api/instagram/transcript',
 	facebook: '/api/facebook/transcript',
+	linkedin: '/api/linkedin/transcript',
+	rumble: '/api/rumble/transcript',
+	twitter: '/api/twitter/transcript',
 };
 
 // Best-effort extraction of plain transcript text from per-platform responses.
@@ -64,7 +67,7 @@ export class TranscriptMagic implements INodeType {
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 		description:
-			'Fetch transcripts from YouTube, TikTok, Instagram, and Facebook videos via TranscriptMagic.',
+			'Fetch transcripts from YouTube, TikTok, Instagram, Facebook, LinkedIn, Rumble, and X (Twitter) videos via TranscriptMagic.',
 		defaults: {
 			name: 'TranscriptMagic',
 		},
@@ -102,16 +105,10 @@ export class TranscriptMagic implements INodeType {
 				displayOptions: { show: { resource: ['transcript'] } },
 				options: [
 					{
-						name: 'YouTube',
-						value: 'youtube',
-						action: 'Fetch a transcript from youtube',
-						description: 'Fetch a transcript from a YouTube video URL',
-					},
-					{
-						name: 'TikTok',
-						value: 'tiktok',
-						action: 'Fetch a transcript from tiktok',
-						description: 'Fetch a transcript from a TikTok video URL',
+						name: 'Facebook',
+						value: 'facebook',
+						action: 'Fetch a transcript from facebook',
+						description: 'Fetch a transcript from a Facebook video URL',
 					},
 					{
 						name: 'Instagram',
@@ -120,10 +117,34 @@ export class TranscriptMagic implements INodeType {
 						description: 'Fetch a transcript from an Instagram video URL',
 					},
 					{
-						name: 'Facebook',
-						value: 'facebook',
-						action: 'Fetch a transcript from facebook',
-						description: 'Fetch a transcript from a Facebook video URL',
+						name: 'LinkedIn',
+						value: 'linkedin',
+						action: 'Fetch a transcript from linkedin',
+						description: 'Fetch a transcript from a LinkedIn post URL',
+					},
+					{
+						name: 'Rumble',
+						value: 'rumble',
+						action: 'Fetch a transcript from rumble',
+						description: 'Fetch a transcript from a Rumble video URL',
+					},
+					{
+						name: 'TikTok',
+						value: 'tiktok',
+						action: 'Fetch a transcript from tiktok',
+						description: 'Fetch a transcript from a TikTok video URL',
+					},
+					{
+						name: 'X (Twitter)',
+						value: 'twitter',
+						action: 'Fetch a transcript from x',
+						description: 'Fetch a transcript from an X (Twitter) video tweet URL (under 2 minutes)',
+					},
+					{
+						name: 'YouTube',
+						value: 'youtube',
+						action: 'Fetch a transcript from youtube',
+						description: 'Fetch a transcript from a YouTube video URL',
 					},
 				],
 				default: 'youtube',
