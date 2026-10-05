@@ -14,7 +14,16 @@ import { version as PACKAGE_VERSION } from '../../package.json';
 const CLIENT_HEADER = `n8n@${PACKAGE_VERSION}`;
 const BASE_URL = 'https://api.transcriptmagic.com';
 
-type Platform = 'youtube' | 'tiktok' | 'instagram' | 'facebook' | 'linkedin' | 'rumble' | 'twitter';
+type Platform =
+	| 'youtube'
+	| 'tiktok'
+	| 'instagram'
+	| 'facebook'
+	| 'linkedin'
+	| 'rumble'
+	| 'twitter'
+	| 'twitch'
+	| 'kick';
 
 const PLATFORM_PATHS: Record<Platform, string> = {
 	youtube: '/api/youtube/transcript',
@@ -24,6 +33,8 @@ const PLATFORM_PATHS: Record<Platform, string> = {
 	linkedin: '/api/linkedin/transcript',
 	rumble: '/api/rumble/transcript',
 	twitter: '/api/twitter/transcript',
+	twitch: '/api/twitch/transcript',
+	kick: '/api/kick/transcript',
 };
 
 // Best-effort extraction of plain transcript text from per-platform responses.
@@ -67,7 +78,7 @@ export class TranscriptMagic implements INodeType {
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 		description:
-			'Fetch transcripts from YouTube, TikTok, Instagram, Facebook, LinkedIn, Rumble, and X (Twitter) videos via TranscriptMagic.',
+			'Fetch transcripts from YouTube, TikTok, Instagram, Facebook, LinkedIn, Rumble, and X (Twitter) videos, and Twitch and Kick clips, via TranscriptMagic.',
 		defaults: {
 			name: 'TranscriptMagic',
 		},
@@ -117,6 +128,12 @@ export class TranscriptMagic implements INodeType {
 						description: 'Fetch a transcript from an Instagram video URL',
 					},
 					{
+						name: 'Kick',
+						value: 'kick',
+						action: 'Fetch a transcript from kick',
+						description: 'Fetch a transcript from a Kick clip URL (clips only, not VODs or live streams)',
+					},
+					{
 						name: 'LinkedIn',
 						value: 'linkedin',
 						action: 'Fetch a transcript from linkedin',
@@ -133,6 +150,12 @@ export class TranscriptMagic implements INodeType {
 						value: 'tiktok',
 						action: 'Fetch a transcript from tiktok',
 						description: 'Fetch a transcript from a TikTok video URL',
+					},
+					{
+						name: 'Twitch',
+						value: 'twitch',
+						action: 'Fetch a transcript from twitch',
+						description: 'Fetch a transcript from a Twitch clip URL (clips only, not VODs or live streams)',
 					},
 					{
 						name: 'X (Twitter)',

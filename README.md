@@ -1,6 +1,6 @@
 # n8n-nodes-transcriptmagic
 
-n8n community node for **[TranscriptMagic](https://transcriptmagic.com)** — fetch transcripts from YouTube, TikTok, Instagram, and Facebook videos directly inside your n8n workflows.
+n8n community node for **[TranscriptMagic](https://transcriptmagic.com)** — fetch transcripts from YouTube, TikTok, Instagram, Facebook, LinkedIn, Rumble, and X (Twitter) videos, plus Twitch and Kick clips, directly inside your n8n workflows.
 
 ## Install
 
@@ -27,6 +27,15 @@ POST a video URL, get back the transcript.
 | TikTok | `POST /api/tiktok/transcript` |
 | Instagram | `POST /api/instagram/transcript` |
 | Facebook | `POST /api/facebook/transcript` |
+| LinkedIn | `POST /api/linkedin/transcript` |
+| Rumble | `POST /api/rumble/transcript` |
+| X (Twitter) | `POST /api/twitter/transcript` |
+| Twitch | `POST /api/twitch/transcript` |
+| Kick | `POST /api/kick/transcript` |
+
+**Twitch and Kick: clips only.** Use a clip URL (`clips.twitch.tv/…`, `twitch.tv/{channel}/clip/…`, `kick.com/{channel}/clips/…`, or `kick.com/{channel}?clip=…`). VODs, past broadcasts, and live streams aren't supported. Clips without captions are transcribed with AI automatically. X (Twitter) videos must be under 2 minutes.
+
+Every transcript operation costs 1 credit per successful call. Cache hits and errors are free.
 
 ### Account
 
@@ -38,7 +47,7 @@ POST a video URL, get back the transcript.
 
 The node exposes two output modes via **Options → Output Format**:
 
-- **Normalized** (default) — `{ text, platform, credits, url }`. Hides per-platform shape differences so the same downstream nodes work across YouTube, TikTok, Instagram, and Facebook.
+- **Normalized** (default) — `{ text, platform, credits, url }`. Hides per-platform shape differences so the same downstream nodes work across every platform.
 - **Raw** — the upstream API response passed through verbatim. Use this when you need YouTube's per-line timed segments or platform-specific metadata (`videoUrls`, `language`, etc).
 
 ## Error handling
@@ -57,7 +66,7 @@ The minimal flow: trigger → transcribe → done.
 1. **Manual Trigger**
 2. **TranscriptMagic**
    - Resource: `Transcript`
-   - Operation: `YouTube` (or TikTok / Instagram / Facebook)
+   - Operation: `YouTube` (or TikTok / Instagram / Facebook / LinkedIn / Rumble / X (Twitter) / Twitch / Kick)
    - URL: paste any public video URL
 3. Run. The output item contains `text`, `platform`, `credits`, and `url`.
 
