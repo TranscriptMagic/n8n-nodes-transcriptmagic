@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-transcriptmagic",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "n8n community node for TranscriptMagic — fetch transcripts from YouTube, TikTok, Instagram, Facebook, LinkedIn, Rumble, and X videos, and Twitch and Kick clips.",
   "keywords": [
     "n8n-community-node-package",
