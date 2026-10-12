@@ -4,6 +4,7 @@ import type {
 	INodeType,
 	INodeTypeDescription,
 	IHttpRequestOptions,
+	INode,
 	JsonObject,
 } from 'n8n-workflow';
 import { NodeApiError, NodeOperationError, sleep } from 'n8n-workflow';
@@ -297,10 +298,10 @@ export class TranscriptMagic implements INodeType {
 				);
 			} catch (error) {
 				if (this.continueOnFail()) {
-					returnData.push({
-						json: { error: (error as Error).message },
-						pairedItem: { item: i },
-					});
+					const json: JsonObject = { error: (error as Error).message };
+					const upgradeUrl = apiErrorBody(error)?.upgradeUrl;
+					if (typeof upgradeUrl === 'string') json.upgradeUrl = upgradeUrl;
+					returnData.push({ json, pairedItem: { item: i } });
 					continue;
 				}
 				throw error;
@@ -345,17 +346,53 @@ async function callTranscriptMagic(
 		// Single retry on 429 Retry-After
 		const errAny = error as { httpCode?: string | number; response?: { headers?: Record<string, string | string[]>; statusCode?: number } };
 		const status = Number(errAny.httpCode ?? errAny.response?.statusCode ?? 0);
-		if (status === 429) {
-			const retryAfter = headerValue(errAny.response?.headers, 'retry-after');
-			const delayMs = (parseInt(retryAfter || '5', 10) || 5) * 1000;
-			await sleep(delayMs);
+		if (status !== 429) {
+			throw toApiError(this.getNode(), error);
+		}
+		const retryAfter = headerValue(errAny.response?.headers, 'retry-after');
+		const delayMs = (parseInt(retryAfter || '5', 10) || 5) * 1000;
+		await sleep(delayMs);
+		try {
 			response = await send();
-		} else {
-			throw new NodeApiError(this.getNode(), error as JsonObject);
+		} catch (retryError) {
+			throw toApiError(this.getNode(), retryError);
 		}
 	}
 
 	return response.body;
+}
+
+// The API answers errors with `{ error, code?, message?, upgradeUrl? }`, where
+// `message` is written for the user (e.g. no_credits: "You're out of credits. Add
+// more at <url>"). NodeApiError would replace it with a generic status line such as
+// "Forbidden - perhaps check your credentials?", and Continue on Fail only keeps
+// the message, so put the API's message first and its upgradeUrl in the description.
+function toApiError(node: INode, error: unknown): NodeApiError {
+	const apiError =
+		error instanceof NodeApiError ? error : new NodeApiError(node, error as JsonObject);
+	const body = apiErrorBody(error) ?? apiErrorBody(apiError);
+	const message = typeof body?.message === 'string' ? body.message.trim() : '';
+	const upgradeUrl = typeof body?.upgradeUrl === 'string' ? body.upgradeUrl : '';
+	if (message) {
+		apiError.message = message;
+		apiError.description = upgradeUrl
+			? `Add credits or pick a plan: ${upgradeUrl}`
+			: apiError.description;
+	}
+	return apiError;
+}
+
+function apiErrorBody(error: unknown): JsonObject | undefined {
+	const e = error as {
+		context?: { data?: unknown };
+		response?: { data?: unknown; body?: unknown };
+		cause?: { response?: { data?: unknown } };
+	} | null;
+	const candidates = [e?.context?.data, e?.response?.data, e?.response?.body, e?.cause?.response?.data];
+	for (const c of candidates) {
+		if (c && typeof c === 'object' && !Array.isArray(c)) return c as JsonObject;
+	}
+	return undefined;
 }
 
 function headerValue(
