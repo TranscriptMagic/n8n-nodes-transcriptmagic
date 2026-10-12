@@ -15,6 +15,16 @@ Restart n8n. The node appears under **TranscriptMagic** in the picker.
 1. [Create an API key](https://transcriptmagic.com/dashboard/api-keys/) in the TranscriptMagic dashboard. Keys begin with `sk_live_`.
 2. In n8n, add a new **TranscriptMagic API** credential and paste your key. The credential test validates the key without consuming a credit.
 
+## Pricing
+
+1 credit = 1 video transcript. Pay for what you use, from 2¢ a transcript.
+
+- **Free:** 3 transcripts a month, no card needed.
+- **Plans** from $9 a month. The API, MCP and this n8n node work on every plan, free included.
+- **Credit packs** on any paid plan: 250 for $10, 1,000 for $35 or 5,000 for $99. No plan change, and they never expire.
+
+Full details: [docs.transcriptmagic.com/pricing](https://docs.transcriptmagic.com/pricing).
+
 ## Operations
 
 ### Transcript
@@ -54,6 +64,7 @@ The node exposes two output modes via **Options → Output Format**:
 
 - **Continue on fail** is supported. A bad URL in a batch surfaces as a per-item error, and the rest of the batch keeps running.
 - **Rate limits**: when the API returns `429`, the node honors `Retry-After` and retries once. The per-key limit is 120 requests/minute.
+- **Out of credits**: the API returns `403 no_credits`. The node shows the API's message, which links to where you can add credits or pick a plan; with Continue on fail, the item's `error` holds that message and `upgradeUrl` holds the link.
 
 ## Example workflows
 
